@@ -4,6 +4,9 @@
  * By Luiz Eduardo da Silva.
  *-------------------------------------------------------------------------*/
 
+
+#include "../include/huffman.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

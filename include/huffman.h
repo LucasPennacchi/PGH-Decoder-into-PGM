@@ -1,7 +1,7 @@
 #ifndef HUFFMAN_H
 #define HUFFMAN_H
 
-#include "node.h"
+#include "../include/node.h"
 
 int pqmindelete(int *rootnodes);
 int pqinsert(int *rootnodes, int i);

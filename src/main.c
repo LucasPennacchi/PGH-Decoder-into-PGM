@@ -14,26 +14,6 @@
 #include "include/huffman.h"
 #include "include/node.h"
 
-/*
-* Ler PGH
-*     -> PH, Largura, Altura, Histograma e Código de Huffman
-* 
-* Fazer a árvore de huffman com o histograma
-*     -> descompactar huffman para dados da imagem
-* 
-* Com dados da imagem e o cabecalho do PGH, fazer o PGM
-*     -> abrir o PGM
-* 
-* Liberar memória
-* 
-* Fim
-* = = = = = = = = = = = = = = = = = = = = = = = = =
-* huffman.h -> possui o arquivo de huffman feito pelo professor
-* node.h -> possui a struct da arvore
-* imagelib.h -> possui função de ler PGH e escrever PGM
-* main.c -> realiza o código de decodificar PGH para PGM
-*/
-
 /*=========================================================================
 * Image Processing using C=Ansi
 * Program : decoding files in PGH format

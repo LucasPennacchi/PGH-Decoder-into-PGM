@@ -9,7 +9,7 @@ typedef struct
     int right;
 } nodetype;
 
-Node* createNode(unsigned char symbol, int freq);
-void freeTree(Node* root);
+nodetype* createNode(unsigned char symbol, int freq);
+void freeTree(nodetype* root);
 
 #endif

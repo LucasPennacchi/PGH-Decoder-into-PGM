@@ -5,19 +5,19 @@
 
 #include "include/imagelib.h"
 
-img_name(argv[1], char* nameIn, char* nameOut, PGH, GRAY)
+void img_name(char* fileName, char* nameIn, char* nameOut, char* PGH, int GRAY)
 {
 
 }
-readpgh(char* nameIn)
+image readpgh(char* nameIn)
 {
 
 }
-img_put(image In,char* nameOut, GRAY)
+image img_put(image In,char* nameOut, int GRAY)
 {
 
 }
-imgfree(image In)
+void imgfree(image In)
 {
     
 }
