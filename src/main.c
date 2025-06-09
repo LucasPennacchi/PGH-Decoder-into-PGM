@@ -1,52 +1,77 @@
+/*=============================================================
+* UNIFAL = Universidade Federal de Alfenas.
+* BACHARELADO EM CIENCIA DA COMPUTACAO.
+* Trabalho . . : Decodificador do formato PGH
+* Professor . : Luiz Eduardo da Silva
+* Aluno . . . . . : Lucas Hideki Okido      2023.1.08.032
+* Data . . . . . . : 11/06/2025
+*=============================================================*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "include/imagelib.h"
 #include "include/huffman.h"
 #include "include/node.h"
-#include <stdio.h>
-#include <stdlib.h>
 
-int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        printf("Uso: %s arquivo.pgh\n", argv[0]);
-        return 1;
-    }
+/*
+* Ler PGH
+*     -> PH, Largura, Altura, Histograma e Código de Huffman
+* 
+* Fazer a árvore de huffman com o histograma
+*     -> descompactar huffman para dados da imagem
+* 
+* Com dados da imagem e o cabecalho do PGH, fazer o PGM
+*     -> abrir o PGM
+* 
+* Liberar memória
+* 
+* Fim
+* = = = = = = = = = = = = = = = = = = = = = = = = =
+* huffman.h -> possui o arquivo de huffman feito pelo professor
+* node.h -> possui a struct da arvore
+* imagelib.h -> possui função de ler PGH e escrever PGM
+* main.c -> realiza o código de decodificar PGH para PGM
+*/
 
-    // Descompactando
-    PGHHeader header;
-    int huffmanDataSize = 0;
-    unsigned char* huffmanData = readPGH(argv[1], &header, &huffmanDataSize);
-    if (!huffmanData) {
-        fprintf(stderr, "Erro ao ler arquivo PGH.\n");
-        return 1;
-    }
+/*=========================================================================
+* Image Processing using C=Ansi
+* Program : decoding files in PGH format
+*=========================================================================*/
 
-    unsigned char* imageData; // dados da imagem
-    int imageSize = header.width * header.height;
 
-    // Criando histograma
-    int histogram[256];
-    generateHistogram(imageData, imageSize, histogram);
-    // Criando arvore de huffman
-    Node* root = buildHuffmanTree(histogram);
-    // Descompactando a arvore em dados
-    unsigned char* decompressed = decompressData(huffmanData, huffmanDataSize, root, header.width * header.height);
+void msg (char* s)
+{
+    printf("Edecoding files in PGH format\n");
+    printf("===============================\n");
+    printf("Usage : %s image=name [.pgh]\n", s);
+    printf("\n\timage=name [.pgh] is image file in pgh format\n\n");
+    exit(1);
+}
+/*=========================================================================
+* main function
+*=========================================================================*/
+int main (int argc, char* argv[])
+{
+char nameIn[100], nameOut[100], cmd[110];
+image In;
+if (argc < 2)
+    msg (argv[0]);
 
-    if (!decompressed) {
-        fprintf(stderr, "Erro na descompressão\n");
-        return 1;
-    }
+// define input/output file name
+img_name(argv[1], nameIn, nameOut, PGH, GRAY);
 
-    // Salvar arquivo PGM com os dados
-    if (!savePGM("saida.pgm", decompressed, &header)) {
-        fprintf(stderr, "Erro ao salvar arquivo PGM\n");
-    } else {
-        printf("Arquivo PGM salvo com sucesso!\n");
-    }
+// read image PGH
+In = readpgh(nameIn);
 
-    // Liberando memoria
-    free(decompressed);
-    freeTree(root);
-    free(huffmanData);
-    free(imageData);
+// save image PGM
+img_put(In, nameOut, GRAY);
 
-    return 0;
+// show image
+sprintf(cmd, "eog %s &", nameOut);
+puts(cmd);
+system(cmd);
+imgfree(In);
+return 0;
+
 }

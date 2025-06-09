@@ -1,12 +1,13 @@
 #ifndef NODE_H
 #define NODE_H
 
-typedef struct Node {
-    unsigned char symbol;
+typedef struct
+{
     int freq;
-    struct Node* left;
-    struct Node* right;
-} Node;
+    int father;
+    int left;
+    int right;
+} nodetype;
 
 Node* createNode(unsigned char symbol, int freq);
 void freeTree(Node* root);

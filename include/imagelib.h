@@ -6,16 +6,13 @@ typedef struct {
     int width;
     int height;
     int maxGray;
-} PGHHeader;
+    int* histogram;
+    unsigned char* huffmanData;
+} image;
 
-/**
- * Lê o cabeçalho e os dados comprimidos de um arquivo .pgh.
- * - `filename`: caminho para o arquivo.
- * - `header`: struct onde será salvo o cabeçalho.
- * - `huffmanDataSize`: recebe o tamanho em bytes dos dados de Huffman.
- * Retorna um ponteiro para os dados comprimidos.
- */
-unsigned char* readPGH(const char* filename, PGHHeader* header, int* huffmanDataSize);
-int savePGM(const char* filename, const unsigned char* imageData, const PGHHeader* header);
+img_name(argv[1], char* nameIn, char* nameOut, PGH, GRAY);
+readpgh(char* nameIn);
+img_put(image In,char* nameOut, GRAY);
+imgfree(image In);
 
 #endif

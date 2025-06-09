@@ -1,134 +1,263 @@
-#include "include/huffman.h"
-// #include "include/node.h" ja incluso no huffman.h
-#include <stdlib.h>
+/*-------------------------------------------------------------------------
+ * Image Processing using C-Ansi
+ *   Program: Huffman tree
+ * By Luiz Eduardo da Silva.
+ *-------------------------------------------------------------------------*/
+
+#include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <math.h>
 
-#define MAX_SYMBOLS 256
+#define MAXSYMBS 256
+#define MAXNODES 511
 
-typedef struct {
-    Node* nodes[MAX_SYMBOLS];
-    int size;
-} MinHeap;
+/*--------------------------------------------------------------
+ * Root= 3    0    1    2    3    4    5    6
+ *          -----------------------------------
+ *    freq    3    8   11    1    0    0    0
+ *  father    1    2   -1    0    0    0    0
+ *    left   -1   -1   -1   -1    0    0    0
+ *   right   -1   -1   -1   -1    0    0    0
+ * 
+ * Lista = 0:[1|1]=> 1:[1|2]=> 2:[1|3]=> 3:[1|-1]=> 
+ *--------------------------------------------------------------*/
 
-static void minHeapify(MinHeap* heap, int idx) {
-    int smallest = idx;
-    int left = 2 * idx + 1;
-    int right = 2 * idx + 2;
 
-    if (left < heap->size && heap->nodes[left]->freq < heap->nodes[smallest]->freq)
-        smallest = left;
-    if (right < heap->size && heap->nodes[right]->freq < heap->nodes[smallest]->freq)
-        smallest = right;
+nodetype node[MAXNODES];
 
-    if (smallest != idx) {
-        Node* temp = heap->nodes[smallest];
-        heap->nodes[smallest] = heap->nodes[idx];
-        heap->nodes[idx] = temp;
-        minHeapify(heap, smallest);
+int pqmindelete(int *rootnodes)
+{
+    int aux;
+    aux = *rootnodes;
+    *rootnodes = node[*rootnodes].father;
+    return aux;
+}
+
+int pqinsert(int *rootnodes, int i)
+{
+    int k, ant, aux;
+    aux = *rootnodes;
+    ant = -1;
+    while (aux != -1 && node[aux].freq <= node[i].freq)
+    {
+        ant = aux;
+        aux = node[aux].father;
+    }
+    if (ant == -1)
+    {
+        node[i].father = *rootnodes;
+        *rootnodes = i;
+    }
+    else
+    {
+        node[i].father = node[ant].father;
+        node[ant].father = i;
     }
 }
 
-static Node* extractMin(MinHeap* heap) {
-    if (heap->size == 0) return NULL;
-    Node* root = heap->nodes[0];
-    heap->nodes[0] = heap->nodes[heap->size - 1];
-    heap->size--;
-    minHeapify(heap, 0);
-    return root;
+/*--------------------------------------------------------------
+ * Mostra a estrutura de nos (Arvore + lista ordenada)
+ *--------------------------------------------------------------*/
+void shownodes(int root, int n)
+{
+    int i;
+    printf("\n\nRoot=%2d", root);
+    for (i = 0; i < 2 * n - 1; i++)
+        printf("%5d", i);
+    printf("\n       ");
+    for (i = 0; i < 2 * n - 1; i++)
+        printf("-----");
+    printf("\n%7s", "freq");
+    for (i = 0; i < 2 * n - 1; i++)
+        printf("%5d", node[i].freq);
+    printf("\n%7s", "father");
+    for (i = 0; i < 2 * n - 1; i++)
+        printf("%5d", node[i].father);
+    printf("\n%7s", "left");
+    for (i = 0; i < 2 * n - 1; i++)
+        printf("%5d", node[i].left);
+    printf("\n%7s", "right");
+    for (i = 0; i < 2 * n - 1; i++)
+        printf("%5d", node[i].right);
+    printf("\n\nLista = ");
+    while (root != -1)
+    {
+        printf("%d:[%d|%d]=> ", root, node[root].freq, node[root].father);
+        root = node[root].father;
+    }
+    printf("\n");
 }
 
-static void insertHeap(MinHeap* heap, Node* node) {
-    heap->size++;
-    int i = heap->size - 1;
-
-    while (i && node->freq < heap->nodes[(i - 1) / 2]->freq) {
-        heap->nodes[i] = heap->nodes[(i - 1) / 2];
-        i = (i - 1) / 2;
+/*--------------------------------------------------------------
+ * buildTree
+ * Funcao que constroi a arvore de huffman
+ * Parametros:
+ *    h  - vetor de histograma (frequencia de cada pixel [0..mn])
+ *    mn - maximo nivel de cinza
+ * Retorna a raiz da árvore construida (2 * mn)
+ *--------------------------------------------------------------*/
+int buildTree(int *h, int mn)
+{
+    int i, k, p, p1, p2, rootnodes = -1, root, father;
+    for (i = 0; i < mn + 1; i++)
+    {
+        node[i].freq = h[i];
+        node[i].left = -1;
+        node[i].right = -1;
+        pqinsert(&rootnodes, i);
     }
-    heap->nodes[i] = node;
+    shownodes(rootnodes, mn + 1);
+    for (p = mn + 1; p < 2 * (mn + 1) - 1; p++)
+    {
+        p1 = pqmindelete(&rootnodes);
+        p2 = pqmindelete(&rootnodes);
+        node[p1].father = p;
+        node[p2].father = p;
+        node[p].freq = node[p1].freq + node[p2].freq;
+        node[p].left = p1;
+        node[p].right = p2;
+        pqinsert(&rootnodes, p);
+        shownodes(rootnodes, mn + 1);
+    }
+    puts("\n");
+    return pqmindelete(&rootnodes);
 }
 
-static MinHeap* createAndBuildMinHeap(int* histogram) {
-    MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
-    heap->size = 0;
-
-    for (int i = 0; i < MAX_SYMBOLS; i++) {
-        if (histogram[i] > 0) {
-            heap->nodes[heap->size++] = createNode((unsigned char)i, histogram[i]);
-        }
-    }
-
-    for (int i = (heap->size - 1) / 2; i >= 0; i--) {
-        minHeapify(heap, i);
-    }
-
-    return heap;
-}
-
-void generateHistogram(const unsigned char* data, int dataSize, int* histogram) {
-    memset(histogram, 0, sizeof(int) * MAX_SYMBOLS);
-    for (int i = 0; i < dataSize; i++) {
-        histogram[data[i]]++;
+void reverse(char *str)
+{
+    int i, len = strlen(str);
+    for (i = 0; i < len / 2; i++)
+    {
+        char tmp = str[i];
+        str[i] = str[len - i - 1];
+        str[len - i - 1] = tmp;
     }
 }
 
-Node* buildHuffmanTree(int* histogram) {
-    MinHeap* heap = createAndBuildMinHeap(histogram);
-    if (!heap) return NULL;
-
-    while (heap->size > 1) {
-        Node* left = extractMin(heap);
-        Node* right = extractMin(heap);
-
-        Node* parent = createNode(0, left->freq + right->freq);
-        parent->left = left;
-        parent->right = right;
-
-        insertHeap(heap, parent);
+/*-------------------------------------------------------------
+ * Huffman code
+ * n = numero de simbolos (pixels)
+ * p = símbolos (pixel)
+ * str = string do código binário de p
+ *-------------------------------------------------------------*/
+void code(int n, int p, char *str)
+{
+    int root = 2 * n - 2;
+    int i = 0;
+    while (p != root)
+    {
+        if (p == node[node[p].father].left)
+            str[i++] = '0';
+        else
+            str[i++] = '1';
+        p = node[p].father;
     }
-
-    Node* root = NULL;
-    if (heap->size == 1) {
-        root = extractMin(heap);
-    }
-    free(heap);
-    return root;
+    str[i] = 0;
+    reverse(str);
 }
 
-
-// Função para ler um bit do buffer (bits da esquerda para a direita, por exemplo)
-static int getBit(const unsigned char* data, int bitIndex) {
-    int byteIndex = bitIndex / 8;
-    int bitOffset = 7 - (bitIndex % 8); // Lendo do bit mais significativo para o menos
-    return (data[byteIndex] >> bitOffset) & 1;
-}
-
-// Descompacta dados Huffman
-unsigned char* decompressData(const unsigned char* compressedData, int compressedSize, Node* root, int outputSize) {
-    unsigned char* output = (unsigned char*)malloc(outputSize);
-    if (!output) return NULL;
-
-    int bitIndex = 0;
-    int outIndex = 0;
-    Node* current = root;
-
-    while (outIndex < outputSize) {
-        int bit = getBit(compressedData, bitIndex++);
-        if (bit == 0) {
-            current = current->left;
-        } else {
-            current = current->right;
-        }
-
-        // Se chegou em uma folha
-        if (current->left == NULL && current->right == NULL) {
-            output[outIndex++] = current->symbol;
-            current = root;
-        }
-
-        // Segurança: se passar do fim dos bits antes de completar a saída, quebra o loop
-        if (bitIndex > compressedSize * 8) break;
+/*--------------------------------------------------------------
+ * drawLinks, createDot
+ * Rotinas que geram uma visualização da árvore de huffman
+ * Para produzir uma imagem, deve-se ter graphViz instalado
+ * e digitar em linha de comando:
+ *    dot -Tpng tree.dot -o tree.png
+ *--------------------------------------------------------------*/
+void drawLinks(FILE *dot, int root)
+{
+    if (root != -1)
+    {
+        int hasLeft = node[root].left != -1;
+        int hasRight = node[root].right != -1;
+        if (!hasLeft && !hasRight) // folha
+            // fprintf(dot, "\tn%d [shape = record, label=\"px=%d|fq=%d\", color=RED]\n", root, root, node[root].freq);
+            fprintf(dot, "\tn%d [shape = record, label=\"%c|%d\", color=RED]\n", root, root + 'a', node[root].freq);
+        else
+            fprintf(dot, "\tn%d [shape = circle, label=\"%d\"]\n", root, node[root].freq);
+        drawLinks(dot, node[root].left);
+        if (hasLeft)
+            fprintf(dot, "\tn%d -> n%d [label=0]\n", root, node[root].left);
+        drawLinks(dot, node[root].right);
+        if (hasRight)
+            fprintf(dot, "\tn%d -> n%d [label=1]\n", root, node[root].right);
     }
-
-    return output;
 }
+
+void createDot(int root)
+{
+    int i;
+    FILE *dot;
+    dot = fopen("tree.dot", "wt");
+    fprintf(dot, "digraph {\n");
+    fprintf(dot, "\tnode [fontename=\"Arial\"];\n");
+    drawLinks(dot, root);
+    fprintf(dot, "}\n");
+    fclose(dot);
+}
+
+void displayCalcs(int *h, int n)
+{
+    char str[110];
+    int i, soma, freqtotal, bytes, bits;
+
+    printf("Pixel Freq. Huf.Code\n");
+    printf("--------------------\n");
+    for (i = 0; i < n; i++)
+    {
+        code(n, i, str);
+        printf("%5d %5d %s\n", i, h[i], str);
+    }
+    printf("\nCálculo do tamanho (em bits) da saída (usando Huf.code)\n");
+    soma = 0;
+    freqtotal = 0;
+    for (i = 0; i < n; i++)
+    {
+        int len, total;
+        code(n, i, str);
+        len = strlen(str);
+        total = len * h[i];
+        printf("%3d pixel(%d) * %2d bits = %3d bits\n", h[i], i, len, total);
+        soma += len * h[i];
+        freqtotal += h[i];
+    }
+    bytes = soma / 8 + ((soma % 8) != 0);
+    printf("\nTotal de bits (cod.Huf.) = %d. Aprox. %d bytes", soma, bytes);
+    bits = (int)(floor(log(n) / log(2))) + 1;
+    soma = freqtotal * bits;
+    bytes = soma / 8 + ((soma % 8) != 0);
+    printf("\nTotal de bits (original) = %d. Aprox. %d bytes\n\n", soma, bytes);
+}
+
+void huf_tree(int *h, int mn, int dot)
+{
+    char str[110];
+    int root = buildTree(h, mn - 1);
+    displayCalcs(h, mn);
+    if (dot)
+    {
+        createDot(root);
+        system("dot -Tsvg tree.dot -o tree.svg");
+        sprintf(str, "%s tree.svg &", "eog");
+        system(str);
+    }
+}
+
+/*--------------------------------------------------------------
+ * main
+ *--------------------------------------------------------------*/
+
+// int main(void)
+// {
+//     int i, n, *h;
+// 
+//     // Le dados
+//     scanf("%d", &n);
+//     h = (int *)malloc(n * sizeof(int));
+//     for (i = 0; i < n; i++)
+//         scanf("%d", h + i);
+// 
+//     // Calcula a arvore de huffman
+//     huf_tree(h, n, 1);
+//     return 0;
+// }
