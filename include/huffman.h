@@ -1,6 +1,10 @@
 #ifndef HUFFMAN_H
 #define HUFFMAN_H
 
-void hufTree(int *histogram, int size, int print);
+#include "node.h"
+
+void generateHistogram(const unsigned char* data, int dataSize, int* histogram);
+Node* buildHuffmanTree(int* histogram);
+unsigned char* decompressData(const unsigned char* compressedData, int compressedSize, Node* root, int outputSize);
 
 #endif

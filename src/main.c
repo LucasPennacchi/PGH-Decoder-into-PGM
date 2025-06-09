@@ -1,70 +1,52 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "include/imagelib.h"
 #include "include/huffman.h"
+#include "include/node.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-#define PGH "pgh"
-#define GRAY "pgm"
-
-void msg(char *s) {
-    printf("\nDecoding files in PGH format");
-    printf("\n-------------------------------------");
-    printf("\nUsage: %s image-name[.pgh]\n\n", s);
-    printf("       image-name[.pgh] is image file in pgh format\n\n");
-    exit(1);
-}
-
-void img_name(const char* original, char* nameIn, char* nameOut, const char* extIn, const char* extOut) {
-    strncpy(nameIn, original, 100);
-    nameIn[99] = '\0';
-
-    char base[100];
-    strncpy(base, original, 100);
-    base[99] = '\0';
-    char* dot = strrchr(base, '.');
-    if (dot) {
-        *dot = '\0';
-    }
-
-    snprintf(nameOut, 100, "%s.%s", base, extOut);
-}
-
-int main(int argc, char *argv[]) {
-    
-    char nameIn[100], nameOut[100], cmd[110];
-
-    if (argc < 2)
-        msg(argv[0]);
-
-    img_name(argv[1], nameIn, nameOut, PGH, GRAY);
-
-    PghImage* img = readPghFile(nameIn);
-    if (!img) {
-        fprintf(stderr, "Erro ao decodificar imagem.\n");
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        printf("Uso: %s arquivo.pgh\n", argv[0]);
         return 1;
     }
 
-    int *histogram = makeHistogram(img);
-    if (!histogram) {
-        freePghImage(img);
+    // Descompactando
+    PGHHeader header;
+    int huffmanDataSize = 0;
+    unsigned char* huffmanData = readPGH(argv[1], &header, &huffmanDataSize);
+    if (!huffmanData) {
+        fprintf(stderr, "Erro ao ler arquivo PGH.\n");
         return 1;
     }
 
-    printf("Histograma:\n");
-    for (int i = 0; i <= img->maxVal; i++) {
-        printf("Nível %d: %d\n", i, histogram[i]);
+    unsigned char* imageData; // dados da imagem
+    int imageSize = header.width * header.height;
+
+    // Criando histograma
+    int histogram[256];
+    generateHistogram(imageData, imageSize, histogram);
+    // Criando arvore de huffman
+    Node* root = buildHuffmanTree(histogram);
+    // Descompactando a arvore em dados
+    unsigned char* decompressed = decompressData(huffmanData, huffmanDataSize, root, header.width * header.height);
+
+    if (!decompressed) {
+        fprintf(stderr, "Erro na descompressão\n");
+        return 1;
     }
 
-    hufTree(histogram, img->maxVal + 1, 1);
+    // Salvar arquivo PGM com os dados
+    if (!savePGM("saida.pgm", decompressed, &header)) {
+        fprintf(stderr, "Erro ao salvar arquivo PGM\n");
+    } else {
+        printf("Arquivo PGM salvo com sucesso!\n");
+    }
 
-    writePgmFile(nameOut, img);
+    // Liberando memoria
+    free(decompressed);
+    freeTree(root);
+    free(huffmanData);
+    free(imageData);
 
-    snprintf(cmd, sizeof(cmd), "eog %s &", nameOut);
-    puts(cmd);
-    system(cmd);
-
-    free(histogram);
-    freePghImage(img);
     return 0;
 }

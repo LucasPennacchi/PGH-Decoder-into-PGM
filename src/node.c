@@ -1,19 +1,19 @@
-#include <stdlib.h>
 #include "include/node.h"
+#include <stdlib.h>
 
-Node* createNode(int value, int freq, Node* left, Node* right) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    newNode->value = value;
-    newNode->freq = freq;
-    newNode->left = left;
-    newNode->right = right;
-    return newNode;
+Node* createNode(unsigned char symbol, int freq) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    if (!node) return NULL;
+    node->symbol = symbol;
+    node->freq = freq;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
 }
 
 void freeTree(Node* root) {
-    if (root) {
-        freeTree(root->left);
-        freeTree(root->right);
-        free(root);
-    }
+    if (!root) return;
+    freeTree(root->left);
+    freeTree(root->right);
+    free(root);
 }

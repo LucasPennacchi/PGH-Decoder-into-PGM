@@ -2,15 +2,20 @@
 #define IMAGELIB_H
 
 typedef struct {
+    char magic[4];  // "PGH" + null terminator
     int width;
     int height;
-    int maxVal;
-    unsigned char* data;
-} PghImage;
+    int maxGray;
+} PGHHeader;
 
-PghImage* readPghFile(const char* filename);
-void writePgmFile(const char* filename, PghImage* img);
-void freePghImage(PghImage* img);
-int* makeHistogram(PghImage* img);
+/**
+ * Lê o cabeçalho e os dados comprimidos de um arquivo .pgh.
+ * - `filename`: caminho para o arquivo.
+ * - `header`: struct onde será salvo o cabeçalho.
+ * - `huffmanDataSize`: recebe o tamanho em bytes dos dados de Huffman.
+ * Retorna um ponteiro para os dados comprimidos.
+ */
+unsigned char* readPGH(const char* filename, PGHHeader* header, int* huffmanDataSize);
+int savePGM(const char* filename, const unsigned char* imageData, const PGHHeader* header);
 
-#endif // IMAGELIB_H
+#endif
