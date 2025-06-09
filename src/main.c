@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "imagelib.h"
-#include "huffman.h"
+#include "include/imagelib.h"
+#include "include/huffman.h"
 
 #define PGH "pgh"
 #define GRAY "pgm"

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "imagelib.h"
+#include "include/imagelib.h"
 
 PghImage* readPghFile(const char* filename) {
     FILE* file = fopen(filename, "rb");

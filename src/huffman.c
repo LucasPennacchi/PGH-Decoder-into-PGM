@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "huffman.h"
-#include "node.h"
+#include "include/huffman.h"
+#include "include/node.h"
 
 static int compare(const void* a, const void* b) {
     Node* n1 = *(Node**)a;
