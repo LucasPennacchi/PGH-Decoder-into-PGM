@@ -15,7 +15,7 @@
 //#include "../include/node.h"
 
 /*=========================================================================
-* Image Processing using C=Ansi
+* Image Processing using C-Ansi
 * Program : decoding files in PGH format
 *=========================================================================*/
 
@@ -24,7 +24,7 @@ void msg (char* s)
 {
     printf("Edecoding files in PGH format\n");
     printf("===============================\n");
-    printf("Usage : %s image=name [.pgh]\n", s);
+    printf("Usage : %s image-name [.pgh]\n", s);
     printf("\n\timage=name [.pgh] is image file in pgh format\n\n");
     exit(1);
 }

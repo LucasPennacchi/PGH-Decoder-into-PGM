@@ -3,7 +3,7 @@
 
 // Definições de formatos
 #define GRAY 1
-#define PGH ".pgh"
+#define PGH 0
 
 // Struct para imagem em tons de cinza
 typedef struct {
@@ -14,7 +14,7 @@ typedef struct {
 } image;
 
 // Funções disponíveis
-void img_name(char* fileName, char* nameIn, char* nameOut, char* PGH, int GRAY);
+void img_name(char* fileName, char* nameIn, char* nameOut, int PGH, int GRAY);
 image readpgh(char* nameIn);
 image img_put(image In, char* nameOut, int GRAY);
 void imgfree(image In);

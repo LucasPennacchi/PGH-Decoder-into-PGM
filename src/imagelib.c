@@ -5,17 +5,36 @@
 //#include "../include/node.h"
 #include "../include/huffman.h"
 
-// Define os nomes dos arquivos de entrada (.pgh) e saída (.pgm)
-void img_name(char* fileName, char* nameIn, char* nameOut, char* PGH, int GRAY) {
-    strcpy(nameIn, fileName);
-    if (strstr(nameIn, PGH) == NULL)
-        strcat(nameIn, PGH);
 
-    strcpy(nameOut, fileName);
-    if (strstr(nameOut, PGH) != NULL)
-        *strstr(nameOut, PGH) = '\0';
-    strcat(nameOut, GRAY == 1 ? ".pgm" : ".ppm"); // aqui só tratamos GRAY mesmo
+/*-------------------------------------------------------------------------
+ * Define input and output image name
+ * Params:
+ *   name = image name file
+ *   in = input image name
+ *   out = output image name
+ *   tpIn, tpOut = image type (BW, GRAY, COLOR)
+ *-------------------------------------------------------------------------*/
+void img_name(char *name, char *in, char *out, int tpIn, int tpOut)
+{
+    char *ext[3] = {".pbm", ".pgm", ".ppm"};
+    char *p = strstr(name, ext[tpIn - 1]);
+    if (p)
+        *p = 0;
+    sprintf(in, "%s%s", name, ext[tpIn - 1]);
+    sprintf(out, "%s-result%s", name, ext[tpOut - 1]);
 }
+
+// Define os nomes dos arquivos de entrada (.pgh) e saída (.pgm)
+//void img_name(char* fileName, char* nameIn, char* nameOut, char* PGH, int GRAY) {
+//    strcpy(nameIn, fileName);
+//    if (strstr(nameIn, PGH) == NULL)
+//        strcat(nameIn, PGH);
+//
+//    strcpy(nameOut, fileName);
+//    if (strstr(nameOut, PGH) != NULL)
+//        *strstr(nameOut, PGH) = '\0';
+//    strcat(nameOut, GRAY == 1 ? ".pgm" : ".ppm"); // aqui só tratamos GRAY mesmo
+//}
 
 // Lê o arquivo .pgh e reconstrói a imagem original decodificando com Huffman
 image readpgh(char* nameIn) {
