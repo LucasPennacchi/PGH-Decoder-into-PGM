@@ -2,9 +2,16 @@
 #define HUFFMAN_H
 
 #include <stdio.h>
-#include "../include/node.h"
+//#include "../include/node.h"
 #include "../include/imagelib.h"
 
+typedef struct
+{
+    int freq;
+    int father;
+    int left;
+    int right;
+} nodetype;
 
 int pqmindelete(int *rootnodes);
 int pqinsert(int *rootnodes, int i);

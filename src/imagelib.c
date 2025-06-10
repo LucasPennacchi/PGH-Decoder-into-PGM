@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../include/imagelib.h"
-#include "../include/node.h"
+//#include "../include/node.h"
 #include "../include/huffman.h"
 
 // Define os nomes dos arquivos de entrada (.pgh) e saída (.pgm)

@@ -12,7 +12,7 @@
 #include <string.h>
 #include "../include/imagelib.h"
 #include "../include/huffman.h"
-#include "../include/node.h"
+//#include "../include/node.h"
 
 /*=========================================================================
 * Image Processing using C=Ansi
