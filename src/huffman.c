@@ -246,21 +246,38 @@ void huf_tree(int *h, int mn, int dot)
     }
 }
 
-/*--------------------------------------------------------------
- * main
- *--------------------------------------------------------------*/
+void decodeHuffmanImage(FILE *fp, Image *img, int root) {
+    int bitPos = 0;
+    unsigned char currentByte = 0;
+    int i, j;
 
-// int main(void)
-// {
-//     int i, n, *h;
-// 
-//     // Le dados
-//     scanf("%d", &n);
-//     h = (int *)malloc(n * sizeof(int));
-//     for (i = 0; i < n; i++)
-//         scanf("%d", h + i);
-// 
-//     // Calcula a arvore de huffman
-//     huf_tree(h, n, 1);
-//     return 0;
-// }
+    // Para cada pixel da imagem
+    for (i = 0; i < img->rows; i++) {
+        for (j = 0; j < img->cols; j++) {
+            int currentIndex = root;
+
+            // Caminha na árvore até achar uma folha
+            while (node[currentIndex].left != -1 && node[currentIndex].right != -1) {
+                if (bitPos == 0) {
+                    size_t result = fread(&currentByte, 1, 1, fp);
+                    if (result != 1) {
+                        fprintf(stderr, "Erro ao ler bit do arquivo\n");
+                        return;
+                    }
+                    bitPos = 8;
+                }
+
+                int bit = (currentByte >> 7) & 1;
+                currentByte <<= 1;
+                bitPos--;
+
+                if (bit == 0)
+                    currentIndex = node[currentIndex].left;
+                else
+                    currentIndex = node[currentIndex].right;
+            }
+
+            img->pixels[i][j] = currentIndex; // índice da folha == valor do pixel
+        }
+    }
+}

@@ -1,18 +1,22 @@
 #ifndef IMAGELIB_H
 #define IMAGELIB_H
 
+// Definições de formatos
+#define GRAY 1
+#define PGH ".pgh"
+
+// Struct para imagem em tons de cinza
 typedef struct {
-    char magic[4];  // "PGH" + null terminator
-    int width;
-    int height;
-    int maxGray;
-    int* histogram;
-    unsigned char* huffmanData;
+    int rows;
+    int cols;
+    int maxval;
+    unsigned char** pixels;
 } image;
 
-void img_name(argv[1], char* nameIn, char* nameOut, PGH, GRAY);
+// Funções disponíveis
+void img_name(char* fileName, char* nameIn, char* nameOut, char* PGH, int GRAY);
 image readpgh(char* nameIn);
-image img_put(image In,char* nameOut, GRAY);
+image img_put(image In, char* nameOut, int GRAY);
 void imgfree(image In);
 
 #endif

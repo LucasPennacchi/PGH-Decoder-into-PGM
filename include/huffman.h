@@ -1,7 +1,10 @@
 #ifndef HUFFMAN_H
 #define HUFFMAN_H
 
+#include <stdio.h>
 #include "../include/node.h"
+#include "../include/imagelib.h"
+
 
 int pqmindelete(int *rootnodes);
 int pqinsert(int *rootnodes, int i);
@@ -13,5 +16,7 @@ void drawLinks(FILE *dot, int root);
 void createDot(int root);
 void displayCalcs(int *h, int n);
 void huf_tree(int *h, int mn, int dot);
+
+void decodeHuffmanImage(FILE *fp, Image *img, HuffmanNode *root, int totalPixels);
 
 #endif
