@@ -246,7 +246,7 @@ void huf_tree(int *h, int mn, int dot)
     }
 }
 
-void decodeHuffmanImage(FILE *fp, Image *img, int root) {
+void decodeHuffmanImage(FILE *fp, image *img, int root) {
     int bitPos = 0;
     unsigned char currentByte = 0;
     int i, j;

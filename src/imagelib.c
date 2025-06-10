@@ -14,27 +14,33 @@
  *   out = output image name
  *   tpIn, tpOut = image type (BW, GRAY, COLOR)
  *-------------------------------------------------------------------------*/
-void img_name(char *name, char *in, char *out, int tpIn, int tpOut)
+/***
+ * O que foi alterado:
+ * rigidez para o nome de entrada mostrar log do erro e não dar core dump
+ */
+void img_name(const char *name, char *in, char *out, int tpIn, int tpOut)
 {
-    char *ext[3] = {".pbm", ".pgm", ".ppm"};
-    char *p = strstr(name, ext[tpIn - 1]);
-    if (p)
-        *p = 0;
-    sprintf(in, "%s%s", name, ext[tpIn - 1]);
-    sprintf(out, "%s-result%s", name, ext[tpOut - 1]);
+    char temp[256];
+    const char *ext[3] = {".pgh", ".pgm", ".ppm"};
+
+    // Safety check
+    if (tpIn < 1 || tpIn > 3 || tpOut < 1 || tpOut > 3) {
+        fprintf(stderr, "Invalid type index: tpIn=%d tpOut=%d\n", tpIn, tpOut);
+        return;
+    }
+
+    strncpy(temp, name, sizeof(temp) - 1);
+    temp[sizeof(temp) - 1] = '\0';
+
+    char *p = strstr(temp, ext[tpIn - 1]);
+    if (p != NULL) {
+        *p = '\0'; // Safely terminate before extension
+    }
+
+    snprintf(in, 256, "%s%s", temp, ext[tpIn - 1]);
+    snprintf(out, 256, "%s-result%s", temp, ext[tpOut - 1]);
 }
 
-// Define os nomes dos arquivos de entrada (.pgh) e saída (.pgm)
-//void img_name(char* fileName, char* nameIn, char* nameOut, char* PGH, int GRAY) {
-//    strcpy(nameIn, fileName);
-//    if (strstr(nameIn, PGH) == NULL)
-//        strcat(nameIn, PGH);
-//
-//    strcpy(nameOut, fileName);
-//    if (strstr(nameOut, PGH) != NULL)
-//        *strstr(nameOut, PGH) = '\0';
-//    strcat(nameOut, GRAY == 1 ? ".pgm" : ".ppm"); // aqui só tratamos GRAY mesmo
-//}
 
 // Lê o arquivo .pgh e reconstrói a imagem original decodificando com Huffman
 image readpgh(char* nameIn) {
@@ -88,7 +94,8 @@ image readpgh(char* nameIn) {
 
     // Decodifica imagem
     int totalPixels = rows * cols;
-    decodeHuffmanImage(fp, &img, node, totalPixels);
+
+    decodeHuffmanImage(fp, &img, root);
 
     free(hist);
     fclose(fp);
@@ -96,7 +103,7 @@ image readpgh(char* nameIn) {
 }
 
 // Escreve imagem em formato .pgm
-image img_put(image In, char* nameOut, int GRAY) {
+image img_put(image In, char* nameOut, int tpOut) {
     FILE* fp = fopen(nameOut, "wb");
     if (!fp) {
         fprintf(stderr, "Erro ao criar arquivo de saída: %s\n", nameOut);

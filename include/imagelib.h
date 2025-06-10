@@ -2,8 +2,8 @@
 #define IMAGELIB_H
 
 // Definições de formatos
-#define GRAY 1
-#define PGH 0
+#define GRAY 2
+#define PGH 1
 
 // Struct para imagem em tons de cinza
 typedef struct {
@@ -14,9 +14,9 @@ typedef struct {
 } image;
 
 // Funções disponíveis
-void img_name(char* fileName, char* nameIn, char* nameOut, int PGH, int GRAY);
+void img_name(const char *name, char *in, char *out, int tpIn, int tpOut);
 image readpgh(char* nameIn);
-image img_put(image In, char* nameOut, int GRAY);
+image img_put(image In, char* nameOut, int tpOut);
 void imgfree(image In);
 
 #endif

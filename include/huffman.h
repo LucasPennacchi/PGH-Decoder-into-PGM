@@ -24,6 +24,6 @@ void createDot(int root);
 void displayCalcs(int *h, int n);
 void huf_tree(int *h, int mn, int dot);
 
-void decodeHuffmanImage(FILE *fp, image *img, nodetype *root, int totalPixels);
+void decodeHuffmanImage(FILE *fp, image *img, int root);
 
 #endif
