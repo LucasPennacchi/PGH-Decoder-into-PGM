@@ -1,16 +1,23 @@
+/*=============================================================
+* UNIFAL = Universidade Federal de Alfenas.
+* BACHARELADO EM CIENCIA DA COMPUTACAO.
+* Trabalho . . : Decodificador do formato PGH
+* Professor . : Luiz Eduardo da Silva
+* Aluno . . . . . : Lucas Hideki Okido      2023.1.08.032
+* Data . . . . . . : 11/06/2025
+*=============================================================*/
+
 /*-------------------------------------------------------------------------
  * Image Processing using C-Ansi
  *   Program: Huffman tree
- * By Luiz Eduardo da Silva.
+ * Functions other than decodeHuffmanImage, were made by Luiz Eduardo da Silva.
  *-------------------------------------------------------------------------*/
-
-
-#include "../include/huffman.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "../include/huffman.h"
 
 #define MAXSYMBS 256
 #define MAXNODES 511

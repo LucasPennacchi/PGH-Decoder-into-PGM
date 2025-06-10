@@ -1,20 +1,20 @@
+/*=============================================================
+* UNIFAL = Universidade Federal de Alfenas.
+* BACHARELADO EM CIENCIA DA COMPUTACAO.
+* Trabalho . . : Decodificador do formato PGH
+* Professor . : Luiz Eduardo da Silva
+* Aluno . . . . . : Lucas Hideki Okido      2023.1.08.032
+* Data . . . . . . : 11/06/2025
+*=============================================================*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../include/imagelib.h"
-//#include "../include/node.h"
 #include "../include/huffman.h"
 
 
-/*-------------------------------------------------------------------------
- * Define input and output image name
- * Params:
- *   name = image name file
- *   in = input image name
- *   out = output image name
- *   tpIn, tpOut = image type (BW, GRAY, COLOR)
- *-------------------------------------------------------------------------*/
-/***
+/**
  * O que foi alterado:
  * rigidez para o nome de entrada mostrar log do erro e não dar core dump
  */
