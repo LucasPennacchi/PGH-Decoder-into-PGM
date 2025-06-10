@@ -110,7 +110,7 @@ image img_put(image In, char* nameOut, int tpOut) {
         exit(1);
     }
 
-    fprintf(fp, "P5\n%d %d\n%d\n", In.cols, In.rows, In.maxval);
+    fprintf(fp, "P2\n%d %d\n%d\n", In.cols, In.rows, In.maxval);
     for (int i = 0; i < In.rows; i++) {
         fwrite(In.pixels[i], sizeof(unsigned char), In.cols, fp);
     }
