@@ -104,7 +104,7 @@ image readpgh(char* nameIn) {
 
 // Escreve imagem em formato .pgm
 image img_put(image In, char* nameOut, int tpOut) {
-    FILE* fp = fopen(nameOut, "wb");
+    FILE* fp = fopen(nameOut, "w"); // usa "w" pois será texto
     if (!fp) {
         fprintf(stderr, "Erro ao criar arquivo de saída: %s\n", nameOut);
         exit(1);
@@ -112,11 +112,16 @@ image img_put(image In, char* nameOut, int tpOut) {
 
     fprintf(fp, "P2\n%d %d\n%d\n", In.cols, In.rows, In.maxval);
     for (int i = 0; i < In.rows; i++) {
-        fwrite(In.pixels[i], sizeof(unsigned char), In.cols, fp);
+        for (int j = 0; j < In.cols; j++) {
+            fprintf(fp, "%d ", In.pixels[i][j]);
+        }
+        fprintf(fp, "\n");
     }
+
     fclose(fp);
     return In;
 }
+
 
 // Libera a memória da imagem
 void imgfree(image In) {
