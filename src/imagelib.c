@@ -103,7 +103,7 @@ image readpgh(char* nameIn) {
 }
 
 // Escreve imagem em formato .pgm
-image img_put(image In, char* nameOut, int tpOut) {
+void img_put(image In, char* nameOut, int tpOut) {
     FILE* fp = fopen(nameOut, "w"); // usa "w" pois será texto
     if (!fp) {
         fprintf(stderr, "Erro ao criar arquivo de saída: %s\n", nameOut);
@@ -119,7 +119,6 @@ image img_put(image In, char* nameOut, int tpOut) {
     }
 
     fclose(fp);
-    return In;
 }
 
 

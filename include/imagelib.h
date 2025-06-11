@@ -16,7 +16,7 @@ typedef struct {
 // Funções disponíveis
 void img_name(const char *name, char *in, char *out, int tpIn, int tpOut);
 image readpgh(char* nameIn);
-image img_put(image In, char* nameOut, int tpOut);
+void img_put(image In, char* nameOut, int tpOut);
 void imgfree(image In);
 
 #endif
